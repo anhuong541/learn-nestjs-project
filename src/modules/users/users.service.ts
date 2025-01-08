@@ -1,9 +1,10 @@
 import { UpdateUserDto } from './dto/update-user.dto';
-import { User } from 'src/entitities/users.entity';
+import { User } from 'src/entitities/user.entity';
 import { Injectable } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { responseSuccess } from 'src/common/constants/api.response';
 import { InjectRepository } from '@nestjs/typeorm';
+import { CreateUserDto } from './dto/create-user.dto';
 
 @Injectable()
 export class UsersService {
@@ -12,16 +13,19 @@ export class UsersService {
     private readonly userRepository: Repository<User>,
   ) {}
 
-  async create(createUser: User) {
-    const newUser = this.userRepository.create({
-      id: 1,
-      firstName: 'An',
-      lastName: 'Huong',
-      isActive: true,
+  async checkUsernameExisted(username: string) {
+    const usernameInDB = this.userRepository.findOneBy({
+      username,
     });
 
-    const user = await this.userRepository.save(newUser);
+    return usernameInDB;
+  }
 
+  async createUser(createUser: CreateUserDto) {
+    const newUser = this.userRepository.create({
+      ...createUser,
+    });
+    const user = await this.userRepository.save(newUser);
     return responseSuccess(user, 'create user success');
   }
 

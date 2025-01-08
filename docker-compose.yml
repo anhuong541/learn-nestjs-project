@@ -1,15 +1,34 @@
 version: '3.8'
 
 services:
+  # app:
+  #   container_name: nestjs-learning-app
+  #   build:
+  #     context: .
+  #     dockerfile: Dockerfile
+  #   ports:
+  #     - '${APP_PORT:-3000}:3000'
+  #   environment:
+  #     NODE_ENV: ${NODE_ENV:-development}
+  #     DB_HOST: db
+  #     DB_PORT: ${DB_PORT:-5432}
+  #     DB_NAME: ${DB_NAME:-myapp}
+  #     DB_USERNAME: ${DB_USER:-postgres}
+  #     DB_PASSWORD: ${DB_PASSWORD:-password}
+  #   depends_on:
+  #     - db
+  #   networks:
+  #     - nestjs-learning
+
   db:
     container_name: nestjs-learning-db
     image: postgres:latest
     environment:
       POSTGRES_DB: ${DB_NAME:-myapp}
-      POSTGRES_USER: ${DB_USERNAME:-postgres}
+      POSTGRES_USER: ${DB_USER:-postgres}
       POSTGRES_PASSWORD: ${DB_PASSWORD:-password}
     ports:
-      - '${DB_PORT:-5432}:5432'
+      - '${DB_PORT_PUBLIC:-5432}:5432'
     volumes:
       - pg_data:/var/lib/postgresql/data
     networks:

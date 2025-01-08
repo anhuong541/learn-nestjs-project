@@ -6,6 +6,7 @@ import {
   Patch,
   Param,
   Delete,
+  ForbiddenException,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -16,8 +17,15 @@ export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Post()
-  create(@Body() createUserDto: CreateUserDto) {
-    return this.usersService.create(createUserDto);
+  async create(@Body() createUserDto: CreateUserDto) {
+    const checkUsername = await this.usersService.checkUsernameExisted(
+      createUserDto.username,
+    );
+
+    if (!!checkUsername) {
+      throw new ForbiddenException('User is already existed');
+    }
+    return this.usersService.createUser(createUserDto);
   }
 
   @Get()

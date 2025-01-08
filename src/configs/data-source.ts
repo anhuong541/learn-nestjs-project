@@ -4,15 +4,16 @@ import * as path from 'path';
 
 dotenv.config();
 
-export default new DataSource({
+const AppDataSource = new DataSource({
   type: 'postgres',
   host: process.env.DB_HOST,
-  port: +process.env.DB_PORT,
+  port: parseInt(process.env.DB_PORT, 10) || 5432,
   username: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
   database: process.env.DB_NAME,
-  entities: [path.join(__dirname, 'src', 'entities', '*.entity.{ts,js}')],
-  migrations: [
-    path.join(__dirname, 'src', 'database', 'migrations', '*.{ts,js}'),
-  ],
+  entities: [],
+  migrations: [path.join(__dirname, '..', 'migrations', '*{.ts,.js}')],
+  synchronize: false,
 });
+
+export default AppDataSource;
