@@ -14,11 +14,12 @@ export class UsersService {
   ) {}
 
   async checkUsernameExisted(username: string) {
-    const usernameInDB = this.userRepository.findOneBy({
-      username,
-    });
-
-    return usernameInDB;
+    return responseSuccess(
+      await this.userRepository.findOneBy({
+        username,
+      }),
+      '',
+    );
   }
 
   async createUser(createUser: CreateUserDto) {
@@ -29,19 +30,26 @@ export class UsersService {
     return responseSuccess(user, 'create user success');
   }
 
+  async updateUser(userId: number, updateUser: UpdateUserDto) {
+    const userUpdated = await this.userRepository.save({
+      id: userId,
+      ...updateUser,
+    });
+
+    return responseSuccess(userUpdated, 'update user success');
+  }
+
   async findAll() {
-    return `This action returns all users`;
+    return responseSuccess(await this.userRepository.find(), '');
   }
 
-  async findOne(id: number) {
-    return `This action returns a #${id} user`;
-  }
-
-  async update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
-  }
-
-  async remove(id: number) {
-    return `This action removes a #${id} user`;
+  async softDeleteUser(id: number) {
+    return responseSuccess(
+      await this.userRepository.save({
+        id,
+        status: 5, // status 5 is mean soft delete
+      }),
+      '',
+    );
   }
 }
